@@ -14,4 +14,38 @@ Reworked the renderer from basic ray-cast wall slices toward a DOOM-style sector
 <img width="960" height="720" alt="image" src="https://github.com/user-attachments/assets/fd911200-1bff-4649-a33a-c075f1db652d" />
 
 "it looks like sephora"
-\- Jesse
+- Jesse
+
+---
+
+# DoomR R Package
+
+This repository has been structured as an R package ready to build, check, and submit to CRAN.
+
+## Installation
+
+You can install the package directly from GitHub:
+
+```R
+# install.packages("remotes")
+remotes::install_github("lee-t/DoomR")
+```
+
+## Usage
+
+```R
+library(DoomR)
+
+# Render the default E1M1 map using DOOM.WAD in your current directory:
+res <- doom_render(wad_path = "DOOM.WAD", verbose = TRUE)
+
+# View the 3D projected wall rendering
+print(res$render_plot)
+
+# View the 2D top-down map of walls
+print(res$map_plot)
+
+# View the 2D top-down map of ray cast projection
+print(res$ray_plot)
+```
+

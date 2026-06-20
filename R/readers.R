@@ -1,4 +1,4 @@
-#' Read a 8-byte name from WAD file connection
+#' Read an 8-byte name from WAD file connection
 #'
 #' @param con A file connection
 #' @return A character string

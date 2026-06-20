@@ -1,6 +1,4 @@
-if (getRversion() >= "2.15.1") {
-  utils::globalVariables(c(".data", "x1", "y1", "x2", "y2", "dx", "dy", "x", "y", "group", "shade"))
-}
+utils::globalVariables(c(".data", "x1", "y1", "x2", "y2", "dx", "dy", "x", "y", "group", "shade"))
 
 #' Render Doom Map
 #'
@@ -10,10 +8,11 @@ if (getRversion() >= "2.15.1") {
 #' @param wad_path Path to the DOOM WAD file. Default is "DOOM.WAD".
 #' @param map_name Name of the map to render. Default is "E1M1".
 #' @param player A list containing player position and angle (x, y, z, angle).
-#' @param fov Field of view in radians.
+#' @param fov Field of view in radians. Default is `pi / 2`.
 #' @param n_rays Number of rays to cast for ray rendering.
 #' @param screen_width Rendered screen width.
 #' @param screen_height Rendered screen height.
+#' @param far_clip Far clipping distance in map units. Default is 2400.
 #' @param verbose Logical; if TRUE, prints progress.
 #' @return A list of plots and parsed data.
 #' @export
@@ -29,11 +28,15 @@ doom_render <- function(wad_path = "DOOM.WAD",
                         n_rays = 640,
                         screen_width = 640,
                         screen_height = 480,
+                        far_clip = 2400,
                         verbose = FALSE) {
 
   if (!file.exists(wad_path)) {
     stop("Could not find DOOM.WAD at: ", wad_path)
   }
+
+  # Epsilon threshold for filtering near-zero render distances
+  min_render_distance <- 1e-6
 
   wad <- read_lump_directory(wad_path)
   lump_table <- wad$lumps
@@ -204,7 +207,7 @@ doom_render <- function(wad_path = "DOOM.WAD",
       if (!is.null(res)) {
         corrected_distance <- res$dist * cos(angles[i] - player$angle)
 
-        if (corrected_distance > 1e-6) {
+        if (corrected_distance > min_render_distance) {
           ray_hits <- rbind(ray_hits, data.frame(
             wall_index = j,
             dist = res$dist,
@@ -333,7 +336,6 @@ doom_render <- function(wad_path = "DOOM.WAD",
       }
 
       if (nrow(visible_windows) > 0 && !is.na(current_sector)) {
-        far_clip <- 2400
         plane_rows[[length(plane_rows) + 1]] <- make_plane_span(
           x_p,
           column_width,

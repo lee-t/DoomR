@@ -1,27 +1,34 @@
 test_that("Functions are exported and exist", {
-  expect_true(exists("read_lump_directory"))
-  expect_true(exists("read_vertexes"))
-  expect_true(exists("read_linedefs"))
-  expect_true(exists("read_sidedefs"))
-  expect_true(exists("read_segs"))
-  expect_true(exists("read_ssectors"))
-  expect_true(exists("read_nodes"))
-  expect_true(exists("read_sectors"))
-  expect_true(exists("doom_render"))
+  exports <- getNamespaceExports("DoomR")
+  expect_true("read_lump_directory" %in% exports)
+  expect_true("read_vertexes" %in% exports)
+  expect_true("read_linedefs" %in% exports)
+  expect_true("read_sidedefs" %in% exports)
+  expect_true("read_segs" %in% exports)
+  expect_true("read_ssectors" %in% exports)
+  expect_true("read_nodes" %in% exports)
+  expect_true("read_sectors" %in% exports)
+  expect_true("doom_render" %in% exports)
 })
 
 test_that("doom_render fails gracefully with missing WAD", {
   expect_error(doom_render(wad_path = "nonexistent.wad"))
 })
 
-test_that("doom_render works with the local DOOM.WAD if present", {
+test_that("doom_render returns expected output structure with valid DOOM.WAD", {
+  # This test requires DOOM.WAD to run end-to-end.
+  # If DOOM.WAD is not present, it will gracefully skip, ensuring compatibility
+  # across different checking environments.
   # Look for DOOM.WAD in parent directories or current directory
   possible_paths <- c(
     "DOOM.WAD",
     "../DOOM.WAD",
-    "../../DOOM.WAD",
-    "/home/runner/work/DoomR/DoomR/DOOM.WAD"
+    "../../DOOM.WAD"
   )
+  github_workspace <- Sys.getenv("GITHUB_WORKSPACE")
+  if (github_workspace != "") {
+    possible_paths <- c(possible_paths, file.path(github_workspace, "DOOM.WAD"))
+  }
   wad_path <- NULL
   for (path in possible_paths) {
     if (file.exists(path)) {

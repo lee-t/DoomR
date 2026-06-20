@@ -2,8 +2,7 @@ Package: DoomR
 Type: Package
 Title: Doom Map Renderer in R
 Version: 0.1.0
-Author: Tony Tran [aut, cre]
-Maintainer: Tony Tran <tony@example.com>
+Authors@R: person("Tony", "Tran", email = "tonytran03@gmail.com", role = c("aut", "cre"))
 Description: Parses Doom WAD files and renders maps in 3D using
     ray casting or wall projection with BSP traversal.
 License: GPL (>= 3)

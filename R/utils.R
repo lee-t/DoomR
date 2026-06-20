@@ -1,3 +1,11 @@
+# Darkening multipliers for lower/upper wall sections.
+# Different rendering approaches use slightly different multipliers
+# to optimize the visual representation.
+SHADE_RAY_SPAN_LOWER <- 0.72
+SHADE_RAY_SPAN_UPPER <- 0.86
+SHADE_POLYGON_LOWER  <- 0.74
+SHADE_POLYGON_UPPER  <- 0.88
+
 #' Ray-segment intersection
 #'
 #' @keywords internal
@@ -96,9 +104,10 @@ make_wall_span <- function(x, corrected_distance, z_low, z_high,
 
   shade <- max(45, min(235, 245 - corrected_distance / 5))
   if (part == "lower") {
-    shade <- shade * 0.72
+    shade <- shade * SHADE_RAY_SPAN_LOWER
   } else if (part == "upper") {
-    shade <- shade * 0.86
+    shade <- shade * SHADE_RAY_SPAN_UPPER
+  }
   }
 
   data.frame(
@@ -289,9 +298,10 @@ make_wall_polygon <- function(wall, z_low, z_high, part, group_id,
   avg_dist <- (p1$forward + p2$forward) / 2
   shade <- max(40, min(230, 245 - avg_dist / 5))
   if (part == "lower") {
-    shade <- shade * 0.74
+    shade <- shade * SHADE_POLYGON_LOWER
   } else if (part == "upper") {
-    shade <- shade * 0.88
+    shade <- shade * SHADE_POLYGON_UPPER
+  }
   }
 
   data.frame(
@@ -350,13 +360,13 @@ traverse_bsp <- function(node_index, px, py, walls, seg_info, nodes, ssectors,
       draw_ssector(ssector_index, walls, seg_info, ssectors, verbose)
       return(ssector_index)
     } else {
-      cat(sprintf("Invalid SSECTOR index: %d\n", ssector_index))
+      warning(sprintf("Invalid SSECTOR index: %d\n", ssector_index))
     }
     return(integer(0))
   }
 
   if (node_index < 0 || node_index >= nrow(nodes)) {
-    cat(sprintf("Invalid NODE index: %d\n", node_index))
+    warning(sprintf("Invalid NODE index: %d\n", node_index))
     return(integer(0))
   }
 
