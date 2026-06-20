@@ -1,0 +1,7 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.git$
+^\.github$
+^DOOM\.R$
+^DOOM\.WAD$
+^doom_render_debug\.png$
